@@ -1,0 +1,39 @@
+version: '2'
+services:
+  sharelatex:
+    restart: always
+    image: sharelatex/sharelatex
+    container_name: resumetex
+    depends_on:
+      - mongo
+      - redis
+    ports:
+      - 5000:80
+    links:
+      - mongo
+      - redis
+    volumes:
+      - $PWD/sharelatex_data:/var/lib/sharelatex
+    environment:
+      SHARELATEX_MONGO_URL: mongodb://mongo/sharelatex
+      SHARELATEX_REDIS_HOST: redis
+      SHARELATEX_APP_NAME: "${USER} ResumeTex"
+    
+  mongo:
+    restart: always
+    image: mongo:4.2
+    container_name: mongo
+    expose:
+      - 27017
+    volumes:
+      - $PWD/mongo:/data/db
+    
+  redis:
+    restart: always
+    image: redis
+    container_name: redis
+    expose:
+      - 6379
+    volumes:
+      - $PWD/redis:/data
+    
